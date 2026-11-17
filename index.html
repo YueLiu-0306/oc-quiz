@@ -1,0 +1,2385 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#221710" />
+<title>相性检定</title>
+<style>/* ============================================================
+   oc-kit 路 绾镐笌鍗?   涓€濂楃粰 OC 鍦堝瓙鎺ュ崟鐢ㄧ殑鍗曟枃浠跺皬宸ュ叿鐨偆銆?   ============================================================ */
+
+:root {
+  --paper: #ece3d1;
+  --paper-hi: #f4ecdc;
+  --ink: #1b1a17;
+  --ink-soft: #4f483c;
+  --ink-faint: #857b6a;
+  --red: #a32b22;
+  --red-deep: #7d1d16;
+  --line: rgba(27, 26, 23, 0.26);
+  --line-soft: rgba(27, 26, 23, 0.14);
+  --serif: "Songti SC", "STSong", "Noto Serif SC", SimSun, "Times New Roman", serif;
+  --sans: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+  --mono: "SFMono-Regular", "Consolas", "Courier New", monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(14px, 4vw, 48px) clamp(10px, 3vw, 32px);
+  font-family: var(--sans);
+  color: var(--ink);
+  background-color: #2b1e17;
+  background-image:
+    repeating-linear-gradient(92deg, rgba(0, 0, 0, 0.17) 0 2px, transparent 2px 7px),
+    repeating-linear-gradient(88deg, rgba(255, 236, 210, 0.035) 0 1px, transparent 1px 11px),
+    radial-gradient(ellipse 120% 80% at 50% -10%, #4b3526 0%, transparent 62%),
+    linear-gradient(158deg, #33241a 0%, #1c130e 100%);
+  background-attachment: fixed;
+}
+
+.app {
+  width: 100%;
+  max-width: 560px;
+}
+
+.noscript {
+  color: var(--paper);
+  font-family: var(--sans);
+  text-align: center;
+}
+
+/* ---------- 绾稿紶 ---------- */
+
+.sheet {
+  position: relative;
+  padding: clamp(20px, 5vw, 34px) clamp(18px, 4.6vw, 34px) clamp(16px, 4vw, 26px);
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(ellipse 90% 60% at 18% 0%, rgba(255, 255, 255, 0.55), transparent 60%),
+    radial-gradient(ellipse 80% 70% at 88% 100%, rgba(60, 40, 20, 0.12), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(60, 40, 20, 0.035) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(60, 40, 20, 0.022) 0 1px, transparent 1px 4px);
+  border: 1px solid rgba(27, 26, 23, 0.55);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.35) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 18px 34px -18px rgba(0, 0, 0, 0.75),
+    0 42px 70px -40px rgba(0, 0, 0, 0.8);
+  animation: sheet-in 0.42s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+
+/* 宸︿晶瑁呰绾㈢嚎 */
+.sheet::before {
+  content: "";
+  position: absolute;
+  top: clamp(14px, 3.6vw, 26px);
+  bottom: clamp(14px, 3.6vw, 26px);
+  left: clamp(8px, 2vw, 13px);
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(163, 43, 34, 0.5) 12%,
+    rgba(163, 43, 34, 0.5) 88%,
+    transparent
+  );
+}
+
+/* 鍥涜瑁佸垏鏍囪 */
+.sheet::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--line-soft) 8px, transparent 8px),
+    linear-gradient(to bottom, var(--line-soft) 8px, transparent 8px),
+    linear-gradient(to left, var(--line-soft) 8px, transparent 8px),
+    linear-gradient(to bottom, var(--line-soft) 8px, transparent 8px),
+    linear-gradient(to right, var(--line-soft) 8px, transparent 8px),
+    linear-gradient(to top, var(--line-soft) 8px, transparent 8px),
+    linear-gradient(to left, var(--line-soft) 8px, transparent 8px),
+    linear-gradient(to top, var(--line-soft) 8px, transparent 8px);
+  background-position: left top, left top, right top, right top, left bottom, left bottom, right bottom, right bottom;
+  background-size: 8px 1px, 1px 8px, 8px 1px, 1px 8px, 8px 1px, 1px 8px, 8px 1px, 1px 8px;
+  background-repeat: no-repeat;
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- 椤电湁椤佃剼 ---------- */
+
+.sheet-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 9px;
+  margin-bottom: clamp(16px, 4vw, 26px);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+.sheet-head b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.sheet-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: clamp(18px, 4.5vw, 28px);
+  padding-top: 10px;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: var(--ink-faint);
+}
+
+/* ---------- 灏侀潰 ---------- */
+
+.kicker {
+  margin: 0 0 10px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  color: var(--red);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(38px, 11vw, 58px);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: 0.04em;
+}
+
+.title .thin {
+  color: var(--ink-faint);
+  font-weight: 400;
+}
+
+.lead {
+  margin: 16px 0 0;
+  max-width: 34em;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--ink-soft);
+  text-align: justify;
+}
+
+.games {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.games span {
+  padding: 3px 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  border: 1px solid var(--line-soft);
+}
+
+.rule {
+  height: 1px;
+  margin: clamp(20px, 5vw, 28px) 0 0;
+  background: linear-gradient(to right, var(--ink) 0 46px, var(--line-soft) 46px);
+}
+
+/* ---------- 琛ㄥ崟 ---------- */
+
+.form {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.field {
+  display: grid;
+  grid-template-columns: 3.4em 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.field > span {
+  font-family: var(--serif);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+}
+
+.field input {
+  width: 100%;
+  padding: 9px 2px 8px;
+  font-family: var(--serif);
+  font-size: 16px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.18s ease;
+}
+
+.field input::placeholder {
+  color: rgba(133, 123, 106, 0.65);
+}
+
+.field input:focus {
+  border-bottom-color: var(--red);
+}
+
+/* ---------- 鎸夐挳 ---------- */
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 24px;
+  padding: 15px 20px;
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--paper-hi);
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 1px;
+  cursor: pointer;
+  transition: background 0.16s ease, transform 0.12s ease;
+}
+
+.cta:hover {
+  background: var(--red-deep);
+  border-color: var(--red-deep);
+}
+
+.cta:active {
+  transform: translateY(1px);
+}
+
+.cta::after {
+  content: "鈫?;
+  font-family: var(--sans);
+  letter-spacing: 0;
+}
+
+.hint {
+  margin: 14px 0 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+/* ---------- 杩涘害 ---------- */
+
+.progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: clamp(20px, 5vw, 30px);
+}
+
+.progress i {
+  flex: 1;
+  height: 3px;
+  background: var(--line-soft);
+  transition: background 0.25s ease;
+}
+
+.progress i.on {
+  background: var(--red);
+}
+
+/* ---------- 绛旈 ---------- */
+
+.qno {
+  margin: 0 0 12px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+}
+
+.qno em {
+  font-style: normal;
+  color: var(--red);
+}
+
+.q {
+  margin: 0 0 clamp(20px, 5vw, 28px);
+  font-family: var(--serif);
+  font-size: clamp(20px, 5.2vw, 25px);
+  font-weight: 600;
+  line-height: 1.55;
+  letter-spacing: 0.02em;
+  text-wrap: pretty;
+}
+
+.opts {
+  display: grid;
+  gap: 9px;
+}
+
+.opt {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  align-items: start;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 14px 14px 12px;
+  text-align: left;
+  font-family: var(--serif);
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid var(--line-soft);
+  border-radius: 1px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.opt:hover {
+  background: rgba(255, 255, 255, 0.55);
+  border-color: var(--line);
+}
+
+.opt:active {
+  transform: translateY(1px);
+}
+
+.opt-idx {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.9;
+  color: var(--red);
+}
+
+.opt.picked {
+  background: rgba(163, 43, 34, 0.08);
+  border-color: var(--red);
+}
+
+/* ---------- 缁撴灉 ---------- */
+
+.pair {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 18px;
+  font-family: var(--serif);
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
+
+.pair .cross {
+  color: var(--red);
+  font-size: 13px;
+}
+
+.pair .sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
+}
+
+.scoreline {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.pct {
+  font-family: var(--serif);
+  font-size: clamp(72px, 22vw, 108px);
+  font-weight: 700;
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.pct small {
+  font-size: 0.28em;
+  letter-spacing: 0;
+  color: var(--ink-faint);
+  margin-left: 4px;
+}
+
+.grade {
+  padding-bottom: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+}
+
+.grade b {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--serif);
+  font-size: 26px;
+  letter-spacing: 0.1em;
+  color: var(--red);
+}
+
+.bar {
+  position: relative;
+  height: 5px;
+  margin: 20px 0 0;
+  background: var(--line-soft);
+  overflow: hidden;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  background: var(--red);
+  transform-origin: left center;
+  animation: bar-grow 0.9s 0.15s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.stamp {
+  position: absolute;
+  top: -6px;
+  right: 0;
+  width: clamp(78px, 20vw, 96px);
+  height: clamp(78px, 20vw, 96px);
+  display: grid;
+  place-items: center;
+  color: var(--red);
+  border: 3px solid var(--red);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px var(--red) inset;
+  opacity: 0;
+  transform: rotate(-11deg) scale(1.6);
+  animation: stamp-drop 0.34s 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  mix-blend-mode: multiply;
+}
+
+@keyframes stamp-drop {
+  to {
+    opacity: 0.88;
+    transform: rotate(-11deg) scale(1);
+  }
+}
+
+.stamp span {
+  display: grid;
+  gap: 3px;
+  font-family: var(--serif);
+  font-size: clamp(16px, 4vw, 19px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: 0.1em;
+  text-indent: 0.1em;
+  text-align: center;
+}
+
+.stamp span span {
+  display: block;
+}
+
+.comment {
+  margin: clamp(22px, 5.5vw, 30px) 0 0;
+  padding-left: 14px;
+  border-left: 2px solid var(--red);
+  font-family: var(--serif);
+  font-size: 14.5px;
+  line-height: 1.95;
+  color: var(--ink-soft);
+  text-align: justify;
+}
+
+.traits {
+  display: grid;
+  gap: 0;
+  margin: clamp(20px, 5vw, 26px) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-soft);
+}
+
+.traits li {
+  display: grid;
+  grid-template-columns: 3em 1fr;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-family: var(--serif);
+  font-size: 13.5px;
+  letter-spacing: 0.04em;
+}
+
+.traits li em {
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  align-self: center;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: clamp(22px, 5vw, 30px);
+}
+
+.btn {
+  padding: 13px 12px;
+  font-family: var(--serif);
+  font-size: 13.5px;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--ink);
+  border-radius: 1px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn:hover {
+  background: var(--ink);
+  color: var(--paper-hi);
+}
+
+.btn--solid {
+  grid-column: 1 / -1;
+  background: var(--ink);
+  color: var(--paper-hi);
+}
+
+.btn--solid:hover {
+  background: var(--red-deep);
+  border-color: var(--red-deep);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* ---------- 鍏朵粬 ---------- */
+
+.linkbtn {
+  padding: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.linkbtn:hover {
+  color: var(--red);
+}
+
+.sheet--quiz {
+  animation-duration: 0.26s;
+}
+
+/* ---------- 閲忚〃锛圠ikert锛?---------- */
+
+.scale {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.scale-dot {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--ink-soft);
+  background: rgba(255, 255, 255, 0.28);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.scale-dot:hover {
+  border-color: var(--ink);
+}
+
+.scale-dot:active {
+  transform: scale(0.94);
+}
+
+.scale-dot.on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper-hi);
+}
+
+.scale-ends {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+
+/* ---------- 瑙掕壊鍖归厤缁撴灉 ---------- */
+
+.cast-name {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(40px, 12vw, 64px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: 0.06em;
+}
+
+.cast-meta {
+  margin: 9px 0 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+
+.dual {
+  display: grid;
+  gap: 9px;
+  margin-top: 18px;
+}
+
+.dual-row {
+  display: grid;
+  grid-template-columns: 2.6em 1fr 2.4em;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+
+.dual-row i {
+  position: relative;
+  display: block;
+  height: 5px;
+  background: var(--line-soft);
+}
+
+.dual-row i b {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--red);
+}
+
+.dual-row em {
+  font-style: normal;
+  text-align: right;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.attach {
+  margin: 16px 0 0;
+  font-family: var(--serif);
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+}
+
+.attach b {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.attach span {
+  margin: 0 8px;
+  color: var(--ink-faint);
+}
+
+.dims {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.dims span {
+  padding: 3px 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  border: 1px solid var(--line-soft);
+}
+
+.dims b {
+  margin-left: 5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.cast-note {
+  margin: 14px 0 0;
+  font-family: var(--serif);
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--ink-soft);
+}
+
+.disclaimer {
+  margin: 18px 0 0;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+.card-preview {
+  display: block;
+  width: 100%;
+  height: auto;
+  box-shadow: 0 30px 70px -34px rgba(0, 0, 0, 0.9);
+}
+
+/* ---------- 出图弹层 ---------- */
+
+.card-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(14, 9, 6, 0.88);
+  animation: modal-in 0.2s ease both;
+}
+
+.card-modal-inner {
+  width: min(430px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-modal-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 62vh;
+  object-fit: contain;
+  box-shadow: 0 30px 60px -30px #000;
+  -webkit-touch-callout: default;
+  user-select: none;
+}
+
+.card-modal-tip {
+  margin: 0;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: rgba(236, 227, 209, 0.72);
+}
+
+.card-modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.card-modal .btn {
+  color: var(--paper-hi);
+  border-color: rgba(236, 227, 209, 0.45);
+}
+
+.card-modal .btn:hover {
+  background: var(--paper-hi);
+  color: var(--ink);
+}
+
+.card-modal .btn--solid {
+  grid-column: 1 / -1;
+  background: var(--paper-hi);
+  border-color: var(--paper-hi);
+  color: var(--ink);
+}
+
+.card-modal .btn--solid:hover {
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--paper-hi);
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 9;
+  padding: 10px 18px;
+  transform: translate(-50%, 12px);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  color: var(--paper-hi);
+  background: rgba(27, 26, 23, 0.94);
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast.on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (max-width: 420px) {
+  .sheet-head {
+    font-size: 9.5px;
+  }
+  .actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet,
+  .bar i,
+  .stamp,
+  .card-modal {
+    animation: none !important;
+  }
+  .stamp {
+    opacity: 0.88;
+    transform: rotate(-11deg);
+  }
+}
+</style>
+</head>
+<body>
+<main id="app" class="app" aria-live="polite"></main>
+<noscript><p class="noscript">这个页面需要开启 JavaScript。</p></noscript>
+<script>window.__OC_CONFIG__ = {"mode":"cast","cover":{"kicker":"TIPI 人格量表 · 依恋类型测算","title":"相性检定","lead":"基于常见心理学模型测定的二十六题依恋模式。先测出你的性格底色，再看你和 TA 在一起会走到哪一步；没有标准答案，按第一反应选，仅供娱乐。","cta":"开始检定","hint":"26 题 · 约 3 分钟 · 结果可保存为图片"},"meta":{"title":"相性检定","author":"@L.Y.","refPrefix":"LY","refLabel":"检定编号","resultKicker":"检定结果","againLabel":"重新检定","labelA":"你","labelB":"对方","placeholderA":"你的名字","placeholderB":"对方的名字","defaultA":"你","defaultB":"对方","castNote":"本结果仅供娱乐，不构成心理评估。","theme":{}},"likert":["完全不像","不太像","说不准","有点像","非常像"],"parts":["性格底色","亲密关系","相处方式","TA的样子"],"questions":[{"part":0,"dim":"E","q":"我是外向的、精力充沛的人。"},{"part":0,"dim":"A","reverse":true,"q":"我容易挑剔，也爱跟人争辩。"},{"part":0,"dim":"C","q":"我做事可靠、有条理。"},{"part":0,"dim":"N","q":"我容易焦虑，情绪容易被搅乱。"},{"part":0,"dim":"O","q":"我对新事物好奇，喜欢复杂的东西。"},{"part":0,"dim":"E","reverse":true,"q":"我话不多，比较安静。"},{"part":0,"dim":"A","q":"我富有同情心，待人温暖。"},{"part":0,"dim":"C","reverse":true,"q":"我有时候散漫，东西经常找不到。"},{"part":0,"dim":"N","reverse":true,"q":"我情绪稳定，不容易被激怒。"},{"part":0,"dim":"O","reverse":true,"q":"我比较传统，不太喜欢天马行空。"},{"part":1,"dim":"AX","q":"对方回消息慢了，我会忍不住想很多。"},{"part":1,"dim":"AV","q":"我不太习惯把自己的软弱给别人看。"},{"part":1,"dim":"AX","q":"我总是需要确认「我们还好吗」。"},{"part":1,"dim":"AV","q":"别人太靠近的时候，我会想后退一点。"},{"part":1,"dim":"AX","q":"我担心对方其实没有我在意TA那么在意我。"},{"part":1,"dim":"AV","q":"我宁愿自己消化情绪，也不想麻烦对方。"},{"part":2,"dim":"DOM","q":"关系里，我通常是想拿主意的那一个。"},{"part":2,"dim":"DOM","reverse":true,"q":"对方替我安排好一切，我会觉得安心。"},{"part":2,"dim":"DOM","q":"我很不喜欢别人替我做决定。"},{"part":2,"dim":"DOM","reverse":true,"q":"为了维持关系，我可以让步到自己不舒服。"}],"partner":[{"who":"partner","part":3,"dim":"E","q":"TA话很多，和人打交道很自然。"},{"who":"partner","part":3,"dim":"C","q":"TA答应过的事，基本都会做到。"},{"who":"partner","part":3,"dim":"AV","q":"TA不太表露情绪，难过也不说。"},{"who":"partner","part":3,"dim":"DOM","q":"关系里，TA更常是拿主意的那一个。"},{"who":"partner","part":3,"dim":"AX","q":"TA需要你反复确认，TA是被在意的。"},{"who":"partner","part":3,"dim":"A","q":"TA对人温和，很少让人难堪。"}],"cast":[{"id":"shenxinghui","name":"沈星回","tag":"把话咽回去的守护者","traits":["克制","长情","后知后觉"],"note":"TA习惯先把你放在身后，再谈自己。你很少听见TA说累，但TA会记得你随口提过的每一件小事。靠近TA的方式不是追问，而是等TA自己开口。","v":{"O":70,"C":85,"E":30,"A":85,"N":45,"AX":45,"AV":72,"DOM":60},"aliases":[]},{"id":"qiyu","name":"祁煜","tag":"用吵闹掩盖不安的画家","traits":["热烈","敏感","健忘"],"note":"TA的话比画还多，情绪来得快去得也快。你不需要接住TA每一句，只要在TA安静下来的那几秒里还在。","v":{"O":90,"C":35,"E":80,"A":65,"N":70,"AX":65,"AV":30,"DOM":40},"aliases":[]},{"id":"lishen","name":"黎深","tag":"把关心翻译成医嘱的人","traits":["克制","可靠","口是心非"],"note":"TA说话像在下诊断，关心也包着一层冷。你如果非要TA把话说明白，TA反而会退回去——TA要的是被理解，不是被审问。","v":{"O":55,"C":95,"E":25,"A":70,"N":40,"AX":40,"AV":68,"DOM":65},"aliases":[]},{"id":"qinche","name":"秦彻","tag":"危险而直接的猎手","traits":["野性","直接","占有欲"],"note":"TA不绕弯，想要什么会直接伸手。跟TA相处没有模糊地带，你要么跟TA站在一边，要么被TA推着走。","v":{"O":80,"C":70,"E":55,"A":30,"N":55,"AX":35,"AV":75,"DOM":90},"aliases":[]},{"id":"xiayizhou","name":"夏以昼","tag":"把责任穿在身上的人","traits":["稳重","担当","嘴硬"],"note":"TA习惯扛事，也习惯不说。你越想替TA分担，TA越会往后退半步——除非你先承认自己也需要人。","v":{"O":60,"C":88,"E":40,"A":78,"N":40,"AX":40,"AV":65,"DOM":70},"aliases":[]},{"id":"xiayan","name":"夏彦","tag":"永远在笑的青梅竹马","traits":["阳光","可靠","藏事"],"note":"TA把「有我在」说得很轻，做得却很实。你可以在TA面前塌下来，TA不会问你为什么。","v":{"O":65,"C":80,"E":85,"A":90,"N":30,"AX":40,"AV":30,"DOM":45},"aliases":[]},{"id":"zuoran","name":"左然","tag":"不会输，也不会靠近","traits":["严谨","寡言","慢热"],"note":"TA对世界有一套极严的标准，对你也一样。想走进TA，不是靠感动，是靠让TA承认你和TA一样认真。","v":{"O":50,"C":98,"E":20,"A":55,"N":35,"AX":30,"AV":80,"DOM":75},"aliases":[]},{"id":"moyi","name":"莫弈","tag":"一眼看穿你的心理医生","traits":["洞察","优雅","深藏"],"note":"TA太容易读懂人，所以你要小心——TA会顺着你的期待说话。真正的TA藏在那些没说出口的地方。","v":{"O":85,"C":75,"E":45,"A":60,"N":30,"AX":30,"AV":55,"DOM":80},"aliases":[]},{"id":"lujinghe","name":"陆景和","tag":"把规则当草稿纸的少爷","traits":["任性","热烈","嘴硬"],"note":"TA想做什么就做什么，包括喜欢你。你管不住TA，但可以决定要不要跟着TA一起乱来。","v":{"O":90,"C":40,"E":75,"A":50,"N":55,"AX":55,"AV":45,"DOM":70},"aliases":[]},{"id":"xiaoyi","name":"萧逸","tag":"把油门踩到底的人","traits":["洒脱","直球","护短"],"note":"TA看起来什么都不在乎，其实把在乎都放在了行动里。你不用猜TA说什么，看TA有没有来。","v":{"O":75,"C":55,"E":80,"A":70,"N":35,"AX":35,"AV":40,"DOM":70},"aliases":[]},{"id":"luchen","name":"陆沉","tag":"礼貌到让人走不近的人","traits":["温柔","距离感","负重"],"note":"TA对谁都好，好到你觉得那不算数。想确认TA的心意，只能去看TA破例的那一次。","v":{"O":70,"C":90,"E":40,"A":75,"N":45,"AX":45,"AV":75,"DOM":80},"aliases":[]},{"id":"qisili","name":"齐司礼","tag":"嘴上不饶人，手上最靠谱","traits":["毒舌","专业","傲娇"],"note":"TA挑你的毛病，是因为TA看得比谁都细。别跟TA犟，把事做好，TA自然会闭嘴——然后偷偷帮你收拾。","v":{"O":65,"C":95,"E":25,"A":45,"N":50,"AX":40,"AV":75,"DOM":85},"aliases":[]},{"id":"chalisu","name":"查理苏","tag":"自认为完美的孔雀","traits":["自信","张扬","孩子气"],"note":"TA需要被看见，也需要被拆穿。你越不捧着TA，TA越会围着你转。","v":{"O":60,"C":60,"E":90,"A":45,"N":30,"AX":50,"AV":25,"DOM":85},"aliases":[]},{"id":"xiamingxing","name":"夏鸣星","tag":"用行动说喜欢的人","traits":["阳光","直率","黏人"],"note":"TA不太会说漂亮话，但会把事情做到你面前。你给TA一点回应，TA能高兴一整天。","v":{"O":75,"C":60,"E":90,"A":80,"N":35,"AX":45,"AV":25,"DOM":40},"aliases":[]},{"id":"zhouqiluo","name":"周棋洛","tag":"把热闹给别人，把空留给自己","traits":["开朗","长情","反差"],"note":"TA在人群里永远是最亮的那一个，但真正累的时候，只会找一个人。你要做的是让TA不用表演。","v":{"O":80,"C":55,"E":95,"A":85,"N":55,"AX":60,"AV":30,"DOM":35},"aliases":[]},{"id":"baiqi","name":"白起","tag":"在暗处替你挡事的人","traits":["沉默","守护","稳定"],"note":"TA不解释，也不邀功。你可能会觉得TA冷淡，但如果出事，第一个到的永远是TA。","v":{"O":45,"C":90,"E":30,"A":75,"N":20,"AX":30,"AV":50,"DOM":70},"aliases":[]},{"id":"xumo","name":"许墨","tag":"温柔是最难拆的伪装","traits":["温润","双面","掌控"],"note":"TA给的情绪价值太顺滑，顺滑到你该警惕。想接近真的TA，就要接受TA也有不肯说的一面。","v":{"O":90,"C":85,"E":40,"A":65,"N":35,"AX":40,"AV":60,"DOM":75},"aliases":[]},{"id":"lizeyan","name":"李泽言","tag":"把喜欢写进安排里","traits":["沉稳","严格","笨拙"],"note":"TA不会说想你，但会把你的日程、餐厅和天气都安排明白。你只要别把TA的好当成理所当然。","v":{"O":45,"C":98,"E":30,"A":55,"N":30,"AX":35,"AV":65,"DOM":90},"aliases":[]},{"id":"lingxiao","name":"凌肖","tag":"嘴最欠的年下","traits":["傲娇","毒舌","黏人"],"note":"TA一张嘴就想气你，一转身又替你跑腿。你要是真生气，TA反而慌了。","v":{"O":80,"C":50,"E":70,"A":50,"N":55,"AX":50,"AV":45,"DOM":55},"aliases":[]},{"id":"gushiye","name":"顾时夜","tag":"不信人，只信你","traits":["谨慎","深情","掌控"],"note":"TA对世界留着三分疑，对你却把底牌摊开。你要的是坦诚，TA要的是确认你不会走。","v":{"O":65,"C":90,"E":40,"A":55,"N":40,"AX":50,"AV":70,"DOM":90},"aliases":[]},{"id":"xiaxiaoyin","name":"夏萧因","tag":"骄傲是壳，认真是核","traits":["骄傲","坚定","别扭"],"note":"TA把姿态摆得很高，其实很容易被一句真心话打动。别哄TA，直接说。","v":{"O":70,"C":75,"E":55,"A":45,"N":50,"AX":55,"AV":55,"DOM":80},"aliases":[]},{"id":"yiyu","name":"易遇","tag":"稳得让人想依赖","traits":["细腻","稳定","安静"],"note":"TA情绪几乎不起伏，这既是安全感，也是距离。你要习惯TA爱你的方式很安静。","v":{"O":55,"C":90,"E":35,"A":85,"N":15,"AX":30,"AV":40,"DOM":50},"aliases":[]},{"id":"aiyin","name":"艾因","tag":"把世界当舞台的孤高者","traits":["骄傲","炽热","偏执"],"note":"TA对热爱的事偏执，对敷衍的事不屑。你要跟得上TA的节奏，也要有本事让TA停下来。","v":{"O":90,"C":70,"E":40,"A":50,"N":60,"AX":60,"AV":55,"DOM":70},"aliases":[]},{"id":"luchen2","name":"路辰","tag":"温柔得没有攻击性","traits":["温柔","克制","守护"],"note":"TA总是先照顾别人，再想起自己。你要主动一点，不然你们会一直停在「很好」的位置。","v":{"O":85,"C":75,"E":40,"A":90,"N":35,"AX":45,"AV":40,"DOM":45},"aliases":[]},{"id":"silan","name":"司岚","tag":"理性是最长情的表达","traits":["理性","克制","可靠"],"note":"TA不擅长说感情，但会把你的问题一条条解决。你要读懂的是TA没说出口的那句。","v":{"O":70,"C":95,"E":30,"A":60,"N":25,"AX":30,"AV":70,"DOM":70},"aliases":[]},{"id":"yexuan","name":"叶瑄","tag":"优雅是教养，也是刀","traits":["优雅","危险","骄傲"],"note":"TA做什么都体面，包括拒绝你。你要的答案，TA不会直接给。","v":{"O":75,"C":80,"E":45,"A":50,"N":45,"AX":45,"AV":70,"DOM":85},"aliases":[]},{"id":"luoxia","name":"罗夏","tag":"把喜欢写在脸上的少年","traits":["直率","活泼","干净"],"note":"TA不藏，也不装。高兴就笑，不高兴就说，跟TA相处不需要翻译。","v":{"O":80,"C":50,"E":85,"A":70,"N":45,"AX":50,"AV":30,"DOM":50},"aliases":[]},{"id":"liubian","name":"刘辩","tag":"坐在最高处，最怕被丢下","traits":["偏执","脆弱","依赖"],"note":"TA的爱是索取型的，需要你一遍遍确认。你能给就多给一点，给不了就别让TA等。","v":{"O":65,"C":45,"E":60,"A":40,"N":80,"AX":90,"AV":25,"DOM":75},"aliases":[]},{"id":"yuanji","name":"袁基","tag":"笑着把局布好的人","traits":["温润","深沉","掌控"],"note":"TA从不说重话，但每一步都在算。你要么当TA的同谋，要么被TA算进去。","v":{"O":70,"C":90,"E":45,"A":45,"N":30,"AX":30,"AV":80,"DOM":95},"aliases":[]},{"id":"sunce","name":"孙策","tag":"江东小霸王，一见你就脸红","traits":["意气","纯情","傲气"],"note":"TA在外人面前威风，在你面前会紧张。你只要给TA一个台阶，TA能把整片江东捧过来。","v":{"O":55,"C":65,"E":85,"A":65,"N":40,"AX":45,"AV":30,"DOM":85},"aliases":[]},{"id":"furong","name":"傅融","tag":"把账算得比谁都清","traits":["务实","精明","护短"],"note":"TA嘴上是生意，心里是护短。你别跟TA谈亏欠，TA不喜欢欠人，也不喜欢被人欠。","v":{"O":50,"C":90,"E":55,"A":55,"N":30,"AX":40,"AV":55,"DOM":60},"aliases":[]},{"id":"zuoci","name":"左慈","tag":"站在人间之外的人","traits":["疏离","通透","神秘"],"note":"TA对什么都淡淡的，包括你。要让TA在意，得先有本事让TA觉得你不一样。","v":{"O":90,"C":80,"E":20,"A":55,"N":25,"AX":25,"AV":90,"DOM":70},"aliases":[]}]};</script>
+<script>/* ============================================================
+   oc-kit · engine
+   配置驱动：换一个 config，就是另一个产品。
+   支持两种结算方式：
+     mode: "match" —— 累加选项分值，换算出百分比 + 区间结论（相性检定）
+     mode: "pick"  —— 统计选项归属，取最高者（你是哪个 OC / 抽签）
+   ============================================================ */
+
+(function () {
+  "use strict";
+
+  var CFG = window.__OC_CONFIG__ || {};
+  var app = document.getElementById("app");
+  var state = {
+    step: "cover",
+    qi: 0,
+    picks: [],
+    items: [],
+    target: null,
+    a: "",
+    b: ""
+  };
+
+  /* ---------------- 小工具 ---------------- */
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function pad(n) {
+    return n < 10 ? "0" + n : String(n);
+  }
+
+  function hash(str) {
+    var h = 2166136261;
+    for (var i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  function today() {
+    var d = new Date();
+    return d.getFullYear() + "." + pad(d.getMonth() + 1) + "." + pad(d.getDate());
+  }
+
+  function toast(msg) {
+    var el = document.querySelector(".toast");
+    if (!el) {
+      el = document.createElement("div");
+      el.className = "toast";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.classList.add("on");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () {
+      el.classList.remove("on");
+    }, 1900);
+  }
+
+  /* ---------------- 结算 ---------------- */
+
+  function compute() {
+    if (CFG.mode === "cast") return computeCast();
+
+    var qs = CFG.questions || [];
+    var total = 0;
+    var max = 0;
+
+    if (CFG.mode === "pick") {
+      var tally = {};
+      qs.forEach(function (q, i) {
+        var opt = q.options[state.picks[i]];
+        if (!opt) return;
+        var key = opt.key || opt.label;
+        tally[key] = (tally[key] || 0) + 1;
+      });
+      var best = null;
+      Object.keys(tally).forEach(function (k) {
+        if (!best || tally[k] > tally[best]) best = k;
+      });
+      var results = CFG.results || [];
+      var hit = null;
+      results.forEach(function (r) {
+        if (r.id === best) hit = r;
+      });
+      return { kind: "pick", result: hit || results[0], tally: tally };
+    }
+
+    qs.forEach(function (q, i) {
+      var opt = q.options[state.picks[i]];
+      var qMax = 0;
+      q.options.forEach(function (o) {
+        if ((o.score || 0) > qMax) qMax = o.score || 0;
+      });
+      max += qMax;
+      total += opt ? opt.score || 0 : 0;
+    });
+
+    var pct = max > 0 ? Math.round((total / max) * 100) : 0;
+    var jitter = (hash(state.a + "|" + state.b) % 5) - 2;
+    pct = Math.max(1, Math.min(100, pct + jitter));
+
+    var bands = (CFG.bands || []).slice().sort(function (x, y) {
+      return x.min - y.min;
+    });
+    var band = bands[0];
+    bands.forEach(function (b) {
+      if (pct >= b.min) band = b;
+    });
+
+    return { kind: "match", pct: pct, band: band, total: total, max: max };
+  }
+
+  function refNo() {
+    var seed = hash(state.a + state.b + CFG.meta.title);
+    // 注意用 >>> ：hash 是无符号 32 位，>> 会变成负数，编号里会冒出 "--69"
+    return (CFG.meta.refPrefix || "OC") + "-" + String((seed % 9000) + 1000) + "-" + String(((seed >>> 5) % 90) + 10);
+  }
+
+  /* ---------------- 渲染 ---------------- */
+
+  function head(left, right) {
+    return (
+      '<header class="sheet-head"><span>' +
+      left +
+      "</span><span>" +
+      right +
+      "</span></header>"
+    );
+  }
+
+  function foot(left, right) {
+    return (
+      '<footer class="sheet-foot"><span>' +
+      left +
+      "</span><span>" +
+      right +
+      "</span></footer>"
+    );
+  }
+
+  function renderCover() {
+    var c = CFG.cover || {};
+    var input = CFG.input !== false;
+    var form = "";
+
+    if (input) {
+      form =
+        '<div class="form">' +
+        '<label class="field"><span>' +
+        esc(CFG.meta.labelA || "你") +
+        '</span><input data-bind="a" maxlength="18" autocomplete="off" placeholder="' +
+        esc(CFG.meta.placeholderA || "输入名字") +
+        '" /></label>' +
+        '<label class="field"><span>' +
+        esc(CFG.meta.labelB || "对象") +
+        '</span><input data-bind="b" maxlength="18" autocomplete="off" placeholder="' +
+        esc(CFG.meta.placeholderB || "输入名字") +
+        '" /></label>' +
+        "</div>";
+    }
+
+    app.innerHTML =
+      '<section class="sheet">' +
+      head("<span>" + esc(CFG.meta.refLabel || "档案编号") + " <b>" + esc(refNo()) + "</b></span>", "<span>" + today() + "</span>") +
+      '<div class="sheet-body">' +
+      '<p class="kicker">' + esc(c.kicker || "机密 · 仅限当事人查阅") + "</p>" +
+      '<h1 class="title">' + (c.title || "相性检定") + "</h1>" +
+      (c.lead ? '<p class="lead">' + esc(c.lead) + "</p>" : "") +
+      (c.games && c.games.length
+        ? '<div class="games">' +
+          c.games
+            .map(function (g) {
+              return "<span>" + esc(g) + "</span>";
+            })
+            .join("") +
+          "</div>"
+        : "") +
+      '<div class="rule"></div>' +
+      form +
+      '<button class="cta" data-action="start">' + esc(c.cta || "开始检定") + "</button>" +
+      (c.hint ? '<p class="hint">' + esc(c.hint) + "</p>" : "") +
+      "</div>" +
+      foot("签发 · " + esc(CFG.meta.author || ""), "第 1 / 3 页") +
+      "</section>";
+
+    var a = app.querySelector('[data-bind="a"]');
+    if (a && !("ontouchstart" in window)) a.focus({ preventScroll: true });
+  }
+
+  function renderQuiz() {
+    var q = state.items[state.qi];
+    var n = state.items.length;
+    var pctDone = Math.round(((state.qi + 1) / n) * 100);
+    var segs = "";
+    for (var i = 0; i < n; i++) {
+      segs += '<i class="' + (i <= state.qi ? "on" : "") + '"></i>';
+    }
+
+    var opts = "";
+    var optsInner = "";
+
+    if (CFG.likert) {
+      CFG.likert.forEach(function (label, i) {
+        optsInner +=
+          '<button class="scale-dot' +
+          (state.picks[state.qi] === i ? " on" : "") +
+          '" data-action="answer" data-i="' +
+          i +
+          '" aria-label="' +
+          esc(label) +
+          '" title="' +
+          esc(label) +
+          '">' +
+          (i + 1) +
+          "</button>";
+      });
+      opts =
+        '<div class="scale" role="radiogroup">' +
+        optsInner +
+        "</div>" +
+        '<div class="scale-ends"><span>' +
+        esc(CFG.likert[0]) +
+        "</span><span>" +
+        esc(CFG.likert[CFG.likert.length - 1]) +
+        "</span></div>";
+    } else {
+      q.options.forEach(function (o, i) {
+        optsInner +=
+          '<button class="opt' +
+          (state.picks[state.qi] === i ? " picked" : "") +
+          '" data-action="answer" data-i="' +
+          i +
+          '"><span class="opt-idx">' +
+          String.fromCharCode(65 + i) +
+          "</span><span>" +
+          esc(o.label) +
+          "</span></button>";
+      });
+      opts = '<div class="opts">' + optsInner + "</div>";
+    }
+
+    var partLabel = "";
+    if (CFG.parts && CFG.parts[q.part]) partLabel = esc(CFG.parts[q.part]) + " · ";
+
+    app.innerHTML =
+      '<section class="sheet sheet--quiz">' +
+      head("<span>命题 <b>" + pad(state.qi + 1) + " / " + pad(n) + "</b></span>", "<span>完成度 " + pctDone + "%</span>") +
+      '<div class="progress">' +
+      segs +
+      "</div>" +
+      '<div class="sheet-body">' +
+      '<p class="qno">' + partLabel + "QUESTION <em>" + pad(state.qi + 1) + "</em></p>" +
+      '<h2 class="q">' + esc(q.q) + "</h2>" +
+      opts +
+      "</div>" +
+      foot(
+        '<button class="linkbtn" data-action="back">← 后退</button>',
+        state.qi + 1 === n ? "最后一题" : "还有 " + (n - state.qi - 1) + " 题"
+      ) +
+      "</section>";
+  }
+
+  function renderResult() {
+    var r = compute();
+    var isPick = r.kind === "pick";
+    var body = "";
+
+    if (isPick) {
+      var hit = r.result || {};
+      body =
+        '<p class="kicker">' + esc(CFG.meta.resultKicker || "检定结论") + "</p>" +
+        '<h1 class="title">' + esc(hit.name || "") + "</h1>" +
+        (hit.sub ? '<p class="qno">' + esc(hit.sub) + "</p>" : "") +
+        '<p class="comment">' + esc(hit.comment || "") + "</p>" +
+        (hit.traits && hit.traits.length ? traitsList(hit.traits) : "");
+    } else {
+      var b = r.band || {};
+      body =
+        '<p class="kicker">' + esc(CFG.meta.resultKicker || "检定结论") + "</p>" +
+        '<div class="pair"><b>' +
+        esc(state.a) +
+        '</b><span class="cross">×</span><b>' +
+        esc(state.b) +
+        '</b><span class="sub">' +
+        esc(b.name || "") +
+        "</span></div>" +
+        '<div class="scoreline">' +
+        '<span class="pct">' +
+        r.pct +
+        "<small>%</small></span>" +
+        '<span class="grade">评级<b>' +
+        esc(b.grade || "") +
+        "</b></span>" +
+        stampHTML(CFG.meta.stamp || "检定专用") +
+        "</div>" +
+        '<div class="bar"><i style="width:' +
+        r.pct +
+        '%"></i></div>' +
+        '<p class="comment">' +
+        esc(b.comment || "") +
+        "</p>" +
+        (b.traits ? traitsList(b.traits) : "");
+    }
+
+    body +=
+      '<div class="actions">' +
+      '<button class="btn btn--solid" data-action="save">保存为图片</button>' +
+      '<button class="btn" data-action="copy">复制文字</button>' +
+      '<button class="btn" data-action="again">' + esc(CFG.meta.againLabel || "重新检定") + "</button>" +
+      "</div>";
+
+    app.innerHTML =
+      '<section class="sheet">' +
+      head("<span>" + esc(CFG.meta.refLabel || "检定编号") + " <b>" + esc(refNo()) + "</b></span>", "<span>" + today() + "</span>") +
+      '<div class="sheet-body">' +
+      body +
+      "</div>" +
+      foot("签发 · " + esc(CFG.meta.author || ""), "第 3 / 3 页") +
+      "</section>";
+  }
+
+  function stampHTML(text) {
+    var t = String(text || "").trim();
+    if (!t) return "";
+    var half = Math.ceil(t.length / 2);
+    return (
+      '<span class="stamp"><span><span>' +
+      esc(t.slice(0, half)) +
+      "</span><span>" +
+      esc(t.slice(half)) +
+      "</span></span></span>"
+    );
+  }
+
+  function traitsList(list) {
+    var out = '<ul class="traits">';
+    list.forEach(function (t, i) {
+      out += '<li><em>' + pad(i + 1) + "</em><span>" + esc(t) + "</span></li>";
+    });
+    return out + "</ul>";
+  }
+
+  /* ---------------- cast：量表 + 角色库 ---------------- */
+
+  function clamp01(x) {
+    return x < 0 ? 0 : x > 1 ? 1 : x;
+  }
+
+  function attachType(ax, av) {
+    var a = ax >= 50;
+    var v = av >= 50;
+    if (!a && !v) return "安全型";
+    if (a && !v) return "痴迷型";
+    if (!a && v) return "疏离型";
+    return "恐惧型";
+  }
+
+  function collectVector(who) {
+    var sum = {};
+    var cnt = {};
+    var len = (CFG.likert || []).length || 5;
+    state.items.forEach(function (q, i) {
+      if ((q.who || "self") !== who) return;
+      var idx = state.picks[i];
+      if (idx == null) return;
+      var val = q.reverse ? len - idx : idx + 1;
+      var norm = ((val - 1) / (len - 1)) * 100;
+      sum[q.dim] = (sum[q.dim] || 0) + norm;
+      cnt[q.dim] = (cnt[q.dim] || 0) + 1;
+    });
+    var v = {};
+    Object.keys(sum).forEach(function (k) {
+      v[k] = sum[k] / cnt[k];
+    });
+    return v;
+  }
+
+  function castVector() {
+    return collectVector("self");
+  }
+
+  /** 不知道TA是谁的时候，用这六道题现估一个人的坐标 */
+  function partnerVector(u) {
+    var p = collectVector("partner");
+    var pick = function (k, fallback) {
+      return p[k] != null ? p[k] : fallback;
+    };
+    return {
+      O: u.O || 50,
+      C: pick("C", 50),
+      E: pick("E", 50),
+      A: pick("A", 50),
+      N: 50 + (pick("AV", 50) - 50) * 0.3,
+      AX: pick("AX", 50),
+      AV: pick("AV", 50),
+      DOM: pick("DOM", 50)
+    };
+  }
+
+  /** 对上名字后的合成坐标：以已有画像为底，按「你眼中的TA」修正两成。 */
+  function blendVector(base, mine, w) {
+    var out = { O: base.O != null ? base.O : 50 };
+    ["C", "E", "A", "N", "AX", "AV", "DOM"].forEach(function (k) {
+      var b = base[k] != null ? base[k] : 50;
+      var m = mine[k] != null ? mine[k] : b;
+      out[k] = b * (1 - w) + m * w;
+    });
+    return out;
+  }
+
+  /** 名字归一化：去空格标点、去称谓、小写 */
+  function normName(s) {
+    return String(s || "")
+      .toLowerCase()
+      .replace(/[\s·・.、,，。!！?？'"“”‘’()（）\-_]/g, "")
+      .replace(/(老师|先生|医生|大人|阁下)$/g, "");
+  }
+
+  /**
+   * 对上名字：先精确匹配（角色名 / 拼音 id / 别名），再退回包含匹配。
+   * 对上了就用TA的名字和画像，对不上就当场估一个。
+   */
+  function findCast(name) {
+    var q = normName(name);
+    if (!q) return null;
+    var list = CFG.cast || [];
+
+    for (var i = 0; i < list.length; i++) {
+      var names = [list[i].name, list[i].id].concat(list[i].aliases || []);
+      for (var j = 0; j < names.length; j++) {
+        if (normName(names[j]) === q) return list[i];
+      }
+    }
+
+    if (q.length < 2) return null;
+
+    var best = null;
+    var bestLen = 0;
+    for (var m = 0; m < list.length; m++) {
+      var nn = [list[m].name, list[m].id].concat(list[m].aliases || []);
+      for (var k = 0; k < nn.length; k++) {
+        var s = normName(nn[k]);
+        if (s.length < 2) continue;
+        if ((q.indexOf(s) >= 0 || s.indexOf(q) >= 0) && s.length > bestLen) {
+          best = list[m];
+          bestLen = s.length;
+        }
+      }
+    }
+    return best;
+  }
+
+  /** ★ 文案：不知道 TA 什么样时，从向量反推三条特征。这些词可以直接换成你的说法 */
+  function deriveTraits(v) {
+    var cand = [
+      { k: "E", hi: "话多", lo: "话少" },
+      { k: "A", hi: "温和", lo: "有棱角" },
+      { k: "DOM", hi: "主导", lo: "随和" },
+      { k: "AX", hi: "需要确认", lo: "不黏人" },
+      { k: "AV", hi: "习惯后退", lo: "愿意靠近" },
+      { k: "C", hi: "靠谱", lo: "随性" }
+    ];
+    cand.forEach(function (c) {
+      c.w = Math.abs((v[c.k] || 50) - 50);
+    });
+    cand.sort(function (a, b) {
+      return b.w - a.w;
+    });
+    return cand.slice(0, 3).map(function (c) {
+      return (v[c.k] || 50) >= 50 ? c.hi : c.lo;
+    });
+  }
+
+  /** ★ 文案：不知道 TA 什么样时，从向量反推一句人物侧写 */
+  function describeOther(v) {
+    var e = v.E >= 55 ? "话不少，和人打交道很自然" : v.E <= 45 ? "话不多，习惯先听" : "话不多不少";
+    var dom =
+      v.DOM >= 55 ? "更常是拿主意的那一个" : v.DOM <= 45 ? "更愿意跟着你的节奏走" : "和你差不多，谁有理听谁的";
+    var av = v.AV >= 55 ? "会先退半步" : v.AV <= 45 ? "不太设防" : "看情况";
+    return "TA" + e + "；在关系里" + dom + "；遇到有人靠近，TA" + av + "。";
+  }
+
+
+  /**
+   * 配对打分。
+   *
+   * 相似度与支配互补是主项，依恋只作为调节项——早期版本把「安全感」放进主项，
+   * 结果它对每个角色的取值几乎相同，所有人的分数都被压成 68/68/68，区分不出来。
+   *
+   *   相似度   —— 宜人、尽责、开放三维的接近程度（价值观与生活节奏）
+   *   支配互补 —— 一方主导、另一方退让，比两个都强势更容易走远
+   *   安全调节 —— 双方依恋安全水平，相对 0.55 上下浮动
+   *   陷阱扣分 —— 追求者遇上撤退者，最典型的消耗组合
+   */
+  function pairScore(u, c) {
+    // 差距用 0.65 次幂放大：性格差 10 分和差 30 分，体感差别远大于线性，
+    // 而且线性会让不同人的分数贴在一起，区分不出来。
+    var g = function (k) {
+      return Math.pow(Math.abs((u[k] || 0) - (c[k] || 0)) / 100, 0.65);
+    };
+
+    var sim = 1 - (g("A") * 0.4 + g("C") * 0.3 + g("O") * 0.3);
+    var comp = 1 - Math.pow(Math.abs(u.DOM - (100 - c.DOM)) / 100, 0.65);
+
+    var su = 1 - (u.AX + u.AV) / 200;
+    var sc = 1 - (c.AX + c.AV) / 200;
+    var sec = Math.min(su, sc) * 0.7 + ((su + sc) / 2) * 0.3;
+
+    var trap = 0;
+    if (u.AX > 50 && c.AV > 50) trap = Math.max(trap, Math.min(u.AX - 50, c.AV - 50) / 50);
+    if (u.AV > 50 && c.AX > 50) trap = Math.max(trap, Math.min(u.AV - 50, c.AX - 50) / 50);
+
+    var fit = clamp01(0.66 * sim + 0.34 * comp + 0.16 * (sec - 0.55) - 0.16 * trap);
+
+    var energy = 1 - (g("E") * 0.6 + g("N") * 0.4);
+    var tension = clamp01(0.55 * energy + 0.3 * trap + 0.15 * (1 - comp));
+    var total = clamp01(0.74 * fit + 0.26 * tension);
+
+    return { fit: fit, tension: tension, total: total, trap: trap };
+  }
+
+  function gradeOf(s) {
+    if (s >= 85) return "特";
+    if (s >= 76) return "甲";
+    if (s >= 67) return "乙";
+    if (s >= 58) return "丙";
+    return "丁";
+  }
+
+  function decorate(x) {
+    // 契合是主项，张力只做小幅加减：张力高说明有火，张力低也不该把总分拖垮。
+    // 这样「相性」始终贴着「契合」走，不会出现 89% 配 71/45 的自相矛盾。
+    x.dfit = 100 * Math.pow(x.fit, 0.8);
+    x.dten = 100 * Math.pow(x.tension, 0.8);
+    x.score = Math.round(Math.max(5, Math.min(99, x.dfit + (x.dten - 55) * 0.18)));
+    return x;
+  }
+
+  function computeCast() {
+    var u = castVector();
+    var uType = attachType(u.AX || 0, u.AV || 0);
+    var target = state.target || null;
+
+    var list = (CFG.cast || []).map(function (ch) {
+      var p = pairScore(u, ch.v);
+      return decorate({
+        ch: ch,
+        fit: p.fit,
+        tension: p.tension,
+        trap: p.trap,
+        raw: p.total,
+        uType: uType,
+        cType: attachType(ch.v.AX, ch.v.AV)
+      });
+    });
+
+    list.sort(function (a, b) {
+      return b.score - a.score || b.dfit - a.dfit;
+    });
+
+    // 对上了名字 → 用TA的名字和画像；对不上 → 用刚才那六道题估一个
+    var active = null;
+    if (target) {
+      list.forEach(function (x) {
+        if (x.ch.id === target.id) active = x;
+      });
+    }
+    if (!active) {
+      var mine = partnerVector(u);
+      var pv = target ? blendVector(target.v, mine, 0.2) : mine;
+      var p = pairScore(u, pv);
+      active = decorate({
+        ch: {
+          id: "__custom__",
+          name: String(state.b || "对方").slice(0, 12),
+          game: "",
+          tag: "",
+          traits: deriveTraits(pv),
+          note: describeOther(pv)
+        },
+        fit: p.fit,
+        tension: p.tension,
+        trap: p.trap,
+        raw: p.total,
+        uType: uType,
+        cType: attachType(pv.AX, pv.AV)
+      });
+    }
+
+    return { kind: "cast", u: u, uType: uType, list: list, hit: !!target, active: active };
+  }
+
+  /**
+   * ★ 文案：结论文案。五档按「契合高/中 + 张力高/低」组合，最后一句是焦虑-回避陷阱的补充。
+   *   想改语气就改这六句，改完这一版所有用 cast 模式的成品都会跟着变。
+   */
+  function relationLine(a) {
+    var base;
+    if (a.fit >= 0.68 && a.tension >= 0.55)
+      base = "你们会很快靠近，也容易在同一个地方反复受伤——这段关系不无聊，但需要有人先学会停手。";
+    else if (a.fit >= 0.68) base = "安稳，像一件穿旧了却舍不得换的衣服。你们的默契不靠戏剧性来证明。";
+    else if (a.tension >= 0.62) base = "拉扯感很强。你们互相吸引的那部分，恰好也是彼此最受不了的那部分。";
+    else if (a.fit >= 0.52) base = "不算一拍即合，但足够体面。你们能相处，只是需要有人先开口。";
+    else base = "礼貌、平静，也很难真正靠近。你们更适合当彼此生命里一个不错的过客。";
+
+    if (a.trap > 0.45) base += " 你是" + a.uType + "，TA偏" + a.cType + "——越追越退，是你们最可能写出来的剧本。";
+    return base;
+  }
+
+  function castBarsHTML(a) {
+    var f = Math.round(a.dfit);
+    var t = Math.round(a.dten);
+    return (
+      '<div class="dual">' +
+      '<div class="dual-row"><span>契合</span><i><b style="width:' + f + '%"></b></i><em>' + f + "</em></div>" +
+      '<div class="dual-row"><span>张力</span><i><b style="width:' + t + '%"></b></i><em>' + t + "</em></div>" +
+      "</div>"
+    );
+  }
+
+  function castDimsHTML(u) {
+    var map = [
+      ["O", "开放"],
+      ["C", "尽责"],
+      ["E", "外向"],
+      ["A", "宜人"],
+      ["N", "波动"]
+    ];
+    var out = '<div class="dims">';
+    map.forEach(function (m) {
+      out += "<span>" + m[1] + "<b>" + Math.round(u[m[0]] || 0) + "</b></span>";
+    });
+    return out + "</div>";
+  }
+
+  function renderCastResult() {
+    var r = compute();
+    var active = activeFrom(r);
+    if (!active) return;
+
+    var ch = active.ch;
+    var meta = r.hit ? esc(ch.tag) : "根据你的回答推定";
+
+    app.innerHTML =
+      '<section class="sheet">' +
+      head(
+        "<span>" + esc(CFG.meta.refLabel || "检定编号") + " <b>" + esc(refNo()) + "</b></span>",
+        "<span>" + today() + "</span>"
+      ) +
+      '<div class="sheet-body">' +
+      '<p class="kicker">检定结果</p>' +
+      '<h1 class="cast-name">' + esc(ch.name) + "</h1>" +
+      '<p class="cast-meta">' + meta + "</p>" +
+      '<div class="scoreline">' +
+      '<span class="pct">' +
+      active.score +
+      "<small>%</small></span>" +
+      '<span class="grade">相性<b>' +
+      gradeOf(active.score) +
+      "</b></span>" +
+      stampHTML(CFG.meta.stamp || "相性检定") +
+      "</div>" +
+      castBarsHTML(active) +
+      '<p class="attach">你的依恋类型 <b>' +
+      esc(r.uType) +
+      "</b><span>×</span>TA <b>" +
+      esc(active.cType) +
+      "</b></p>" +
+      castDimsHTML(r.u) +
+      '<p class="comment">' + esc(relationLine(active)) + "</p>" +
+      '<p class="cast-note">' + esc(ch.note) + "</p>" +
+      traitsList(ch.traits) +
+      '<div class="actions">' +
+      '<button class="btn btn--solid" data-action="save">保存为图片</button>' +
+      '<button class="btn" data-action="copy">复制文字</button>' +
+      '<button class="btn" data-action="again">' + esc(CFG.meta.againLabel || "重新检定") + "</button>" +
+      "</div>" +
+      '<p class="disclaimer">' + esc(CFG.meta.castNote || "结果仅供娱乐") + "</p>" +
+      "</div>" +
+      foot("签发 · " + esc(CFG.meta.author || ""), "第 3 / 3 页") +
+      "</section>";
+  }
+
+  function render() {
+    if (state.step === "cover") renderCover();
+    else if (state.step === "quiz") renderQuiz();
+    else if (CFG.mode === "cast") renderCastResult();
+    else renderResult();
+    app.setAttribute("data-step", state.step);
+  }
+
+  /* ---------------- 交互 ---------------- */
+
+  app.addEventListener("click", function (ev) {
+    var btn = ev.target.closest("[data-action]");
+    if (!btn) return;
+    var action = btn.getAttribute("data-action");
+
+    if (action === "start") {
+      var a = app.querySelector('[data-bind="a"]');
+      var b = app.querySelector('[data-bind="b"]');
+      state.a = (a && a.value.trim()) || CFG.meta.defaultA || "你";
+      state.b = (b && b.value.trim()) || CFG.meta.defaultB || "对方";
+      state.picks = [];
+      state.qi = 0;
+
+      if (CFG.mode === "cast") {
+        state.target = findCast(state.b);
+        // 两条路的题量必须一致，否则两个人对比一下就能看出结构不同
+        state.items = CFG.questions.concat(CFG.partner || []);
+      } else {
+        state.target = null;
+        state.items = CFG.questions.slice();
+      }
+
+      state.step = "quiz";
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (action === "answer") {
+      state.picks[state.qi] = Number(btn.getAttribute("data-i"));
+      if (state.qi + 1 < state.items.length) {
+        state.qi += 1;
+        render();
+      } else {
+        state.step = "result";
+        render();
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (action === "back") {
+      if (state.qi === 0) {
+        state.step = "cover";
+      } else {
+        state.qi -= 1;
+      }
+      render();
+      return;
+    }
+
+    if (action === "again") {
+      state.step = "cover";
+      state.qi = 0;
+      state.picks = [];
+      render();
+      return;
+    }
+
+    if (action === "save") {
+      saveCard();
+      return;
+    }
+
+    if (action === "copy") {
+      copyText();
+      return;
+    }
+  });
+
+  app.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter" && state.step === "quiz") {
+      var first = app.querySelector('[data-action="answer"]');
+      if (first) first.click();
+    }
+  });
+
+  /* ---------------- 结果卡（Canvas） ---------------- */
+
+  var SERIF = '"Songti SC","STSong","Noto Serif SC",SimSun,serif';
+  var MONO = '"Consolas","Courier New",monospace';
+  var SANS = '"PingFang SC","Microsoft YaHei",sans-serif';
+
+  function cardFileName() {
+    var ca = CFG.mode === "cast" ? activeCast() : null;
+    var who = ca && ca.ch ? ca.ch.name : CFG.mode === "cast" ? state.b : state.a + "x" + state.b;
+    var base = "相性检定_" + (who || "结果");
+    return base.replace(/[\\/:*?"<>|\s]+/g, "_").slice(0, 40) + ".png";
+  }
+
+  function canvasToBlob(canvas) {
+    return new Promise(function (resolve, reject) {
+      if (canvas.toBlob) {
+        canvas.toBlob(function (b) {
+          b ? resolve(b) : reject(new Error("浏览器没有返回图片"));
+        }, "image/png");
+        return;
+      }
+      // 老浏览器的退路
+      try {
+        var data = canvas.toDataURL("image/png");
+        var bin = atob(data.split(",")[1]);
+        var arr = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+        resolve(new Blob([arr], { type: "image/png" }));
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  function saveCard() {
+    var canvas;
+    try {
+      canvas = drawCard();
+    } catch (err) {
+      return toast("导出失败：" + err.message);
+    }
+    toast("正在生成图片…");
+    canvasToBlob(canvas)
+      .then(function (blob) {
+        showCardPreview(blob, canvas);
+      })
+      .catch(function (err) {
+        toast("导出失败：" + err.message);
+      });
+  }
+
+  /**
+   * 出图后不直接触发下载，先把图摊开。
+   * 手机上（尤其微信、小红书内置浏览器）a[download] 常常没反应，
+   * 长按保存才是真正能走通的那条路。
+   */
+  function showCardPreview(blob, canvas) {
+    var url = URL.createObjectURL(blob);
+    var fileName = cardFileName();
+    var file = null;
+    try {
+      file = new File([blob], fileName, { type: "image/png" });
+    } catch (e) {
+      file = null;
+    }
+    var canShare = !!(file && navigator.canShare && navigator.canShare({ files: [file] }));
+
+    var overlay = document.createElement("div");
+    overlay.className = "card-modal";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-label", "结果图片");
+    overlay.innerHTML =
+      '<div class="card-modal-inner">' +
+      '<img class="card-modal-img" src="' + url + '" alt="相性检定结果图" />' +
+      '<p class="card-modal-tip">长按图片可保存到相册</p>' +
+      '<div class="card-modal-actions">' +
+      (canShare ? '<button class="btn btn--solid" data-modal="share">分享给朋友</button>' : "") +
+      '<button class="btn" data-modal="download">下载图片</button>' +
+      '<button class="btn" data-modal="close">关闭</button>' +
+      "</div>" +
+      "</div>";
+
+    document.body.appendChild(overlay);
+    document.body.style.overflow = "hidden";
+
+    // 个别内置浏览器不认 blob: 地址，退回 data URL（长按保存更稳）
+    var img = overlay.querySelector(".card-modal-img");
+    if (img) {
+      img.onerror = function () {
+        try {
+          img.src = canvas.toDataURL("image/png");
+        } catch (e) {
+          /* 没救了，用户还能点关闭 */
+        }
+      };
+    }
+
+    function close() {
+      document.removeEventListener("keydown", onKey);
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      document.body.style.overflow = "";
+      setTimeout(function () {
+        URL.revokeObjectURL(url);
+      }, 400);
+    }
+
+    function onKey(ev) {
+      if (ev.key === "Escape") close();
+    }
+
+    overlay.addEventListener("click", function (ev) {
+      var hit = ev.target.closest ? ev.target.closest("[data-modal]") : null;
+      if (ev.target === overlay || (hit && hit.getAttribute("data-modal") === "close")) {
+        close();
+        return;
+      }
+      if (!hit) return;
+
+      var act = hit.getAttribute("data-modal");
+      if (act === "download") {
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        toast("已开始下载");
+      } else if (act === "share") {
+        navigator
+          .share({ files: [file], title: CFG.meta.title || "相性检定" })
+          .catch(function () {
+            /* 用户取消，不用提示 */
+          });
+      }
+    });
+
+    document.addEventListener("keydown", onKey);
+  }
+
+  function drawCard() {
+    var r = compute();
+    var W = 1080;
+    var H = r.kind === "pick" ? 1350 : 1560;
+    var c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    var g = c.getContext("2d");
+
+    // 纸底
+    g.fillStyle = "#ece3d1";
+    g.fillRect(0, 0, W, H);
+
+    // 纤维噪点
+    for (var i = 0; i < 5200; i++) {
+      var x = Math.random() * W;
+      var y = Math.random() * H;
+      g.fillStyle = "rgba(90,70,45," + (Math.random() * 0.05).toFixed(3) + ")";
+      g.fillRect(x, y, 1.6, 1.6);
+    }
+
+    // 暗角
+    var vg = g.createRadialGradient(W * 0.4, H * 0.28, 160, W * 0.5, H * 0.5, 1150);
+    vg.addColorStop(0, "rgba(255,255,255,0.34)");
+    vg.addColorStop(0.55, "rgba(255,255,255,0)");
+    vg.addColorStop(1, "rgba(70,50,28,0.20)");
+    g.fillStyle = vg;
+    g.fillRect(0, 0, W, H);
+
+    // 外框
+    g.strokeStyle = "rgba(27,26,23,0.5)";
+    g.lineWidth = 2;
+    g.strokeRect(46, 46, W - 92, H - 92);
+
+    // 左上角裁切标记
+    g.strokeStyle = "rgba(27,26,23,0.35)";
+    g.lineWidth = 1;
+    g.beginPath();
+    g.moveTo(66, 84);
+    g.lineTo(66, 66);
+    g.lineTo(84, 66);
+    g.moveTo(W - 66, H - 84);
+    g.lineTo(W - 66, H - 66);
+    g.lineTo(W - 84, H - 66);
+    g.stroke();
+
+    // 页眉
+    g.textBaseline = "alphabetic";
+    g.fillStyle = "#857b6a";
+    g.font = "500 24px " + MONO;
+    g.textAlign = "left";
+    g.fillText((CFG.meta.refLabel || "检定编号") + "  " + refNo(), 92, 132);
+    g.textAlign = "right";
+    g.fillText(today(), W - 92, 132);
+
+    g.strokeStyle = "rgba(27,26,23,0.28)";
+    g.lineWidth = 1;
+    g.beginPath();
+    g.moveTo(92, 162);
+    g.lineTo(W - 92, 162);
+    g.stroke();
+
+    if (r.kind === "cast") drawCastBody(g, W, H, r);
+    else if (r.kind === "pick") drawPickBody(g, W, H, r);
+    else drawMatchBody(g, W, H, r);
+
+    drawFoot(g, W, H);
+    return c;
+  }
+
+  function drawFoot(g, W, H) {
+    g.strokeStyle = "rgba(27,26,23,0.16)";
+    g.lineWidth = 1;
+    g.beginPath();
+    g.moveTo(92, H - 128);
+    g.lineTo(W - 92, H - 128);
+    g.stroke();
+
+    g.fillStyle = "#857b6a";
+    g.font = "500 22px " + MONO;
+    g.textBaseline = "alphabetic";
+    g.textAlign = "left";
+    g.fillText("签发 · " + (CFG.meta.author || ""), 92, H - 82);
+    g.textAlign = "right";
+    g.fillText(CFG.meta.cardFoot || "仅供娱乐", W - 92, H - 82);
+
+    // 成图会被人存下来发出去，页脚印一个地址，等于自带出处
+    if (CFG.meta.siteUrl) {
+      g.textAlign = "center";
+      g.fillStyle = "#9a9182";
+      g.font = "500 20px " + MONO;
+      g.fillText(CFG.meta.siteUrl, W / 2, H - 82);
+    }
+    g.textAlign = "left";
+  }
+
+  function drawTraits(g, W, list, startY) {
+    var traits = list || [];
+    var ty = startY;
+    g.strokeStyle = "rgba(27,26,23,0.16)";
+    g.lineWidth = 1;
+    traits.slice(0, 3).forEach(function (t, idx) {
+      g.beginPath();
+      g.moveTo(92, ty - 34);
+      g.lineTo(W - 92, ty - 34);
+      g.stroke();
+      g.fillStyle = "#857b6a";
+      g.font = "500 20px " + MONO;
+      g.fillText("0" + (idx + 1), 92, ty);
+      g.fillStyle = "#1b1a17";
+      g.font = "400 28px " + SERIF;
+      g.fillText(t, 172, ty);
+      ty += 74;
+    });
+  }
+
+  function drawMatchBody(g, W, H, r) {
+    var band = r.band || {};
+
+    // 标签
+    g.textAlign = "left";
+    g.fillStyle = "#a32b22";
+    g.font = "600 22px " + MONO;
+    g.fillText("相 性 检 定", 92, 232);
+
+    // 名字
+    g.fillStyle = "#1b1a17";
+    g.font = "700 52px " + SERIF;
+    g.fillText(fit(g, state.a + " × " + state.b, W - 184, 52), 92, 306);
+
+    // 结论名
+    g.fillStyle = "#857b6a";
+    g.font = "400 24px " + SERIF;
+    g.fillText(band.name || "", 92, 352);
+
+    // 大百分比
+    g.fillStyle = "#1b1a17";
+    g.font = "700 200px " + SERIF;
+    var pctText = String(r.pct);
+    g.fillText(pctText, 84, 580);
+    var pw = g.measureText(pctText).width;
+    g.fillStyle = "#857b6a";
+    g.font = "600 54px " + SERIF;
+    g.fillText("%", 92 + pw + 6, 580);
+
+    // 评级
+    g.fillStyle = "#857b6a";
+    g.font = "500 22px " + MONO;
+    g.fillText("评级", 96, 646);
+    g.fillStyle = "#a32b22";
+    g.font = "700 62px " + SERIF;
+    g.fillText(band.grade || "", 96, 716);
+
+    // 印章
+    drawStamp(g, W - 200, 500, 108, CFG.meta.stamp || "检定专用");
+
+    // 进度条
+    g.fillStyle = "rgba(27,26,23,0.14)";
+    g.fillRect(92, 776, W - 184, 8);
+    g.fillStyle = "#a32b22";
+    g.fillRect(92, 776, ((W - 184) * r.pct) / 100, 8);
+
+    // 评语
+    g.fillStyle = "#a32b22";
+    g.fillRect(92, 846, 3, 26);
+    g.fillStyle = "#4f483c";
+    g.font = "400 30px " + SERIF;
+    wrap(g, band.comment || "", 116, 872, W - 232, 52, 4);
+
+    drawTraits(g, W, band.traits, 1112);
+  }
+
+  function drawPickBody(g, W, H, r) {
+    var hit = r.result || {};
+
+    // 标签
+    g.textAlign = "left";
+    g.fillStyle = "#a32b22";
+    g.font = "600 22px " + MONO;
+    g.fillText(CFG.meta.resultKicker || "今日签文", 92, 232);
+
+    // 标题：按「·」拆两行，视觉上更有分量
+    var name = hit.name || "";
+    var parts = name
+      .split("·")
+      .map(function (s) {
+        return s.trim();
+      })
+      .filter(Boolean);
+    g.fillStyle = "#1b1a17";
+    if (parts.length === 2) {
+      g.font = "700 86px " + SERIF;
+      g.fillText(parts[0], 92, 356);
+      g.fillText(parts[1], 92, 462);
+    } else {
+      g.font = "700 86px " + SERIF;
+      g.fillText(fit(g, name, W - 184, 86), 92, 400);
+    }
+
+    // 宜忌
+    if (hit.sub) {
+      g.fillStyle = "#857b6a";
+      g.font = "400 26px " + SERIF;
+      g.fillText(hit.sub, 92, 536);
+    }
+
+    // 分隔
+    g.strokeStyle = "rgba(27,26,23,0.22)";
+    g.lineWidth = 1;
+    g.beginPath();
+    g.moveTo(92, 590);
+    g.lineTo(W - 92, 590);
+    g.stroke();
+
+    // 评语
+    g.fillStyle = "#a32b22";
+    g.fillRect(92, 636, 3, 26);
+    g.fillStyle = "#4f483c";
+    g.font = "400 32px " + SERIF;
+    wrap(g, hit.comment || "", 116, 662, W - 232, 56, 3);
+
+    drawTraits(g, W, hit.traits, 900);
+  }
+
+  function activeFrom(r) {
+    if (!r) return null;
+    return r.active || (r.list && r.list[0]) || null;
+  }
+
+  function activeCast() {
+    return activeFrom(compute());
+  }
+
+  function barRow(g, W, y, label, val) {
+    g.textAlign = "left";
+    g.fillStyle = "#857b6a";
+    g.font = "500 22px " + MONO;
+    g.fillText(label, 92, y);
+
+    var x0 = 172;
+    var x1 = W - 176;
+    g.fillStyle = "rgba(27,26,23,0.14)";
+    g.fillRect(x0, y - 11, x1 - x0, 8);
+    g.fillStyle = "#a32b22";
+    g.fillRect(x0, y - 11, ((x1 - x0) * val) / 100, 8);
+
+    g.textAlign = "right";
+    g.fillStyle = "#1b1a17";
+    g.font = "600 24px " + MONO;
+    g.fillText(String(Math.round(val)), W - 92, y);
+    g.textAlign = "left";
+  }
+
+  function drawCastBody(g, W, H, r) {
+    var active = activeFrom(r);
+    if (!active) return;
+    var ch = active.ch;
+    var rank = r.list.indexOf(active) + 1;
+
+    // 标签
+    g.textAlign = "left";
+    g.fillStyle = "#a32b22";
+    g.font = "600 22px " + MONO;
+    g.fillText("相 性 检 定", 92, 232);
+
+    // 角色名
+    g.fillStyle = "#1b1a17";
+    g.font = "700 96px " + SERIF;
+    g.fillText(fit(g, ch.name, W - 184, 96), 92, 356);
+
+    // 出处与人设
+    g.fillStyle = "#857b6a";
+    g.font = "400 26px " + SERIF;
+    g.fillText(ch.tag ? ch.tag : "根据你的回答推定", 92, 412);
+
+    // 大百分比
+    g.fillStyle = "#1b1a17";
+    g.font = "700 190px " + SERIF;
+    var pctText = String(active.score);
+    g.fillText(pctText, 84, 600);
+    var pw = g.measureText(pctText).width;
+    g.fillStyle = "#857b6a";
+    g.font = "600 54px " + SERIF;
+    g.fillText("%", 92 + pw + 6, 600);
+
+    // 评级
+    g.fillStyle = "#857b6a";
+    g.font = "500 22px " + MONO;
+    g.fillText("相性", 96, 666);
+    g.fillStyle = "#a32b22";
+    g.font = "700 62px " + SERIF;
+    g.fillText(gradeOf(active.score), 96, 736);
+
+    // 印章
+    drawStamp(g, W - 200, 520, 108, CFG.meta.stamp || "相性检定");
+
+    // 双通道
+    barRow(g, W, 790, "契合", active.dfit);
+    barRow(g, W, 832, "张力", active.dten);
+
+    // 依恋
+    g.fillStyle = "#857b6a";
+    g.font = "400 26px " + SERIF;
+    g.fillText("你的依恋类型 " + r.uType + "　×　TA " + active.cType, 92, 892);
+
+    // 评语
+    g.fillStyle = "#a32b22";
+    g.fillRect(92, 936, 3, 26);
+    g.fillStyle = "#4f483c";
+    g.font = "400 30px " + SERIF;
+    wrap(g, relationLine(active), 116, 962, W - 232, 50, 4);
+
+    drawTraits(g, W, ch.traits, 1178);
+  }
+
+  function drawStamp(g, cx, cy, rad, text) {
+    g.save();
+    g.translate(cx, cy);
+    g.rotate((-11 * Math.PI) / 180);
+    g.globalAlpha = 0.9;
+    g.strokeStyle = "#a32b22";
+    g.fillStyle = "#a32b22";
+    g.lineWidth = 7;
+    g.beginPath();
+    g.arc(0, 0, rad, 0, Math.PI * 2);
+    g.stroke();
+    g.lineWidth = 2;
+    g.beginPath();
+    g.arc(0, 0, rad - 13, 0, Math.PI * 2);
+    g.stroke();
+
+    var chars = String(text).split("");
+    var half = Math.ceil(chars.length / 2);
+    var lineA = chars.slice(0, half).join("");
+    var lineB = chars.slice(half).join("");
+    g.font = "700 38px " + SERIF;
+    g.textAlign = "center";
+    g.textBaseline = "middle";
+    g.fillText(lineA, 0, -26);
+    g.fillText(lineB, 0, 28);
+    g.restore();
+  }
+
+  function fit(g, text, maxW, base) {
+    var size = base;
+    while (size > 20) {
+      g.font = "700 " + size + "px " + SERIF;
+      if (g.measureText(text).width <= maxW) break;
+      size -= 2;
+    }
+    return text;
+  }
+
+  function wrap(g, text, x, y, maxW, lineH, maxLines) {
+    // 避头点：这些符号不另起一行，宁可让上一行稍微超宽
+    var NO_START = "。，、；：？！）」』】》.,!?;:)%";
+    var line = "";
+    var lines = 0;
+    for (var i = 0; i < text.length; i++) {
+      var ch = text[i];
+      var test = line + ch;
+      if (line && g.measureText(test).width > maxW) {
+        if (NO_START.indexOf(ch) >= 0) {
+          line = test;
+          continue;
+        }
+        g.fillText(line, x, y);
+        lines++;
+        y += lineH;
+        line = ch;
+        if (maxLines && lines >= maxLines - 1) {
+          // 收尾：把剩下的都塞进最后一行（省略）
+          var rest = text.slice(i);
+          while (g.measureText(rest + "…").width > maxW && rest.length > 1) rest = rest.slice(0, -1);
+          g.fillText(rest + "…", x, y);
+          return;
+        }
+      } else {
+        line = test;
+      }
+    }
+    if (line) g.fillText(line, x, y);
+  }
+
+  /* ---------------- 复制文本 ---------------- */
+
+  function copyText() {
+    var r = compute();
+    var text = "";
+    if (CFG.mode === "cast") {
+      var cr = compute();
+      var ca = activeFrom(cr);
+      if (ca) {
+        text =
+          "【相性检定】我 × " +
+          ca.ch.name +
+          "\n相性 " +
+          ca.score +
+          "%  ·  契合 " +
+          Math.round(ca.dfit) +
+          "  ·  张力 " +
+          Math.round(ca.dten) +
+          "\n我的依恋类型：" +
+          cr.uType +
+          "　TA：" +
+          ca.cType +
+          "\n" +
+          relationLine(ca);
+      }
+    } else if (r.kind === "pick") {
+      var hit = r.result || {};
+      text = "【" + (CFG.meta.title || "") + "】" + hit.name + "\n" + (hit.comment || "");
+    } else {
+      var b = r.band || {};
+      text =
+        "【" +
+        (CFG.meta.title || "相性检定") +
+        "】" +
+        state.a +
+        " × " +
+        state.b +
+        "\n相性 " +
+        r.pct +
+        "%  ·  评级 " +
+        (b.grade || "") +
+        "  ·  " +
+        (b.name || "") +
+        "\n" +
+        (b.comment || "");
+    }
+    text += "\n— " + (CFG.meta.author || "");
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(
+        function () {
+          toast("已复制");
+        },
+        function () {
+          toast("复制失败，请手动选择");
+        }
+      );
+    } else {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+        toast("已复制");
+      } catch (e) {
+        toast("复制失败");
+      }
+      document.body.removeChild(ta);
+    }
+  }
+
+  /* ---------------- 主题变量 ---------------- */
+
+  /* ---------------- 预览深链 ----------------
+     #p=quiz / #p=result 可直接跳到对应页面，方便接单时给客户看效果。 */
+
+  var previewMode = "";
+
+  (function preview() {
+    var m = /[#&]p=(cover|quiz|result|card|export)/.exec(window.location.hash || "");
+    if (!m || m[1] === "cover") return;
+    state.a = CFG.meta.defaultA || "你";
+    state.b = CFG.meta.defaultB || "对方";
+
+    // &c=角色id 指定命中某位角色；&c=none 强制走通用模型；&q=N 指定看第 N 题
+    var cm = /[#&]c=([\w-]+)/.exec(window.location.hash || "");
+    var qm = /[#&]q=(\d+)/.exec(window.location.hash || "");
+    if (CFG.mode === "cast") {
+      var forced = cm ? cm[1] : "";
+      if (forced === "none") {
+        state.target = null;
+      } else if (forced) {
+        (CFG.cast || []).forEach(function (ch) {
+          if (ch.id === forced) state.target = ch;
+        });
+      } else {
+        state.target = findCast(state.b);
+      }
+      state.items = CFG.questions.concat(CFG.partner || []);
+      if (state.target) state.b = state.target.name;
+    } else {
+      state.items = CFG.questions.slice();
+    }
+
+    state.picks = state.items.map(function (q, i) {
+      var n = CFG.likert ? CFG.likert.length : q.options.length;
+      return hash(state.a + "|" + i) % n;
+    });
+    state.qi = m[1] === "quiz" ? (qm ? Math.min(Number(qm[1]), state.items.length - 1) : Math.min(2, state.items.length - 1)) : 0;
+    state.step = m[1] === "quiz" ? "quiz" : "result";
+    previewMode = m[1];
+  })();
+
+  var theme = (CFG.meta && CFG.meta.theme) || null;
+  if (theme) {
+    Object.keys(theme).forEach(function (k) {
+      document.documentElement.style.setProperty("--" + k, theme[k]);
+    });
+  }
+
+  render();
+
+  /* 调试钩子：给分布测试用，不影响正常使用 */
+  window.__OCKIT__ = {
+    cast: function (picks) {
+      state.items = CFG.questions.slice();
+      state.picks = picks;
+      state.target = null;
+      state.b = "对方";
+      return computeCast();
+    },
+    findCast: findCast,
+    pairScore: pairScore,
+    attachType: attachType
+  };
+
+  /* #p=card 直接把导出图铺在页面上，用来核对成图效果 */
+  if (previewMode === "card") {
+    var card = drawCard();
+    app.innerHTML =
+      '<img class="card-preview" alt="结果卡预览" src="' + card.toDataURL("image/png") + '" />';
+  }
+
+  /* #p=export 走一遍真实导出流程，用来核对保存弹层 */
+  if (previewMode === "export") {
+    saveCard();
+  }
+})();
+</script>
+</body>
+</html>
